@@ -4,6 +4,10 @@ import dotenv from "dotenv";
 import db from "./config/db.js";
 import cors from "cors";
 
+
+import routeSensorData from "./routes/sensorDataRoutes.js";
+import routeActionData from "./routes/actionRoutes.js";
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json()); // mọi yêu cầu http đều đi qua middleware này trước khi được route handler xử lý ,
@@ -20,3 +24,5 @@ db.query("SELECT 1")
   })
   .catch((err) => console.log("connected failed"));
 
+app.use("/api/data",routeSensorData)
+app.use("/api/action",routeActionData)
