@@ -5,6 +5,9 @@ import Dashboard from "./view/Dashboard";
 import Profile from "./view/Profile";
 import Layout from "./components/layout/Layout";
 
+//style
+import './style/sidebar.scss'
+
 function App() {
   return (
     <BrowserRouter>
