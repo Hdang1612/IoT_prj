@@ -33,7 +33,7 @@ const profile = {
   studentId: "B21DCPT068",
   github: "https://github.com/Hdang1612",
   facebook: "https://www.facebook.com/h.dangg161203/",
-  twitter: "",
+  twitter: "https://www.figma.com/design/zIrIV192TicIQylEXokQv3/iot-dashboard-(Community)?node-id=1-2&t=OZms8QVcwZWUIMsQ-0",
 };
 
 function Dashboard() {

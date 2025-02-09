@@ -2,7 +2,7 @@ import { Modal, Box, Typography, Avatar, IconButton, Link } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
+import BrushIcon from '@mui/icons-material/Brush';
 
 const style = {
   position: "absolute",
@@ -47,7 +47,7 @@ export default function ProfileModal({ open, handleClose, profile }) {
               <FacebookIcon fontSize="large" />
             </Link>
             <Link href={profile.twitter} target="_blank" color="inherit">
-              <TwitterIcon fontSize="large" />
+              <BrushIcon fontSize="large" />
             </Link>
           </Box>
         </Box>
