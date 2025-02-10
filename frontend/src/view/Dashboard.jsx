@@ -2,7 +2,8 @@ import { useState } from "react";
 
 import SearchIcon from "@mui/icons-material/Search";
 
-import { Typography } from "@mui/material";
+
+import { Typography,Box,IconButton,TextField } from "@mui/material";
 
 import DashBoardCard from "../components/DashBoardCard";
 import DashBoardChart from "../components/DashBoardChart";
@@ -36,62 +37,98 @@ const profile = {
   twitter: "https://www.figma.com/design/zIrIV192TicIQylEXokQv3/iot-dashboard-(Community)?node-id=1-2&t=OZms8QVcwZWUIMsQ-0",
 };
 
-function Dashboard() {
+export default function Dashboard() {
   const [openProfile, setOpenProfile] = useState(false);
   return (
-    <div>
-      <div className="dashboard_header h-[8rem] flex gap-[3rem] mb-[2rem] ">
-        <div className="search__bar w-2/3 h-full bg-[#EDEDED] rounded-[5rem] flex items-center ps-10 ">
-          <SearchIcon sx={{ fontSize: 38, marginRight: "2rem" }} />
-          <input
+    <Box>
+      {/* Header */}
+      <Box className="dashboard_header" sx={{ height: "8rem", display: "flex", gap: "3rem", mb: "2rem" }}>
+        
+        {/* Search Bar */}
+        <Box
+          className="search__bar"
+          sx={{
+            width: "66.66%",
+            height: "100%",
+            backgroundColor: "#EDEDED",
+            borderRadius: "5rem",
+            display: "flex",
+            alignItems: "center",
+            pl: "2.5rem",
+          }}
+        >
+          <IconButton>
+            <SearchIcon sx={{ fontSize: 38, mr: "2rem" }} />
+          </IconButton>
+          <TextField
             placeholder="Tìm kiếm"
-            className="outline-none text-[2rem] w-full"
-            type="text"
+            variant="standard"
+            InputProps={{ disableUnderline: true, sx: { fontSize: "2rem", width: "100%" } }}
+            fullWidth
           />
-        </div>
-        <div className="user h full flex items-center gap-5 cursor-pointer" onClick={() => setOpenProfile(true)}>
+        </Box>
+  
+        {/* User Profile */}
+        <Box
+          className="user"
+          sx={{ display: "flex", alignItems: "center", gap: "1.25rem", cursor: "pointer" }}
+          onClick={() => setOpenProfile(true)}
+        >
           <img
             className="w-[8.5rem] h-[8.5rem] rounded-full"
-            src="public/assets/476159892_606573272129995_3942815568264271579_n.jpg"
+            src="/assets/476159892_606573272129995_3942815568264271579_n.jpg"
             alt="user"
           />
           <Typography sx={{ fontSize: "2.2rem" }}>To Hai Dang</Typography>
-        </div>
-      </div>
-      <p className="uppercase font-[700] text-[2rem] mb-3">Overview</p>
-      <div className="dashboard_content flex ">
-        <div className="l_content w-2/3 me-[3rem]">
-          <div className="card_group flex gap-[1rem] mb-[2rem]">
-            <div className="w-1/3">
+        </Box>
+      </Box>
+  
+      {/* Overview */}
+      <Typography sx={{ textTransform: "uppercase", fontWeight: 700, fontSize: "2rem", mb: "0.75rem" }}>
+        Overview
+      </Typography>
+  
+      {/* Dashboard Content */}
+      <Box className="dashboard_content" sx={{ display: "flex" }}>
+        
+        {/* Left Content */}
+        <Box className="l_content" sx={{ width: "66.66%", mr: "3rem" }}>
+          
+          <Box className="card_group" sx={{ display: "flex", gap: "1rem", mb: "2rem" }}>
+            <Box sx={{ width: "33.33%" }}>
               <DashBoardCard type="humidity" value={65} unit="%" />
-            </div>
-            <div className="w-1/3">
+            </Box>
+            <Box sx={{ width: "33.33%" }}>
               <DashBoardCard type="temperature" value={28} unit="°C" />
-            </div>
-            <div className="w-1/3">
+            </Box>
+            <Box sx={{ width: "33.33%" }}>
               <DashBoardCard type="light" value={1200} unit="Lux" />
-            </div>
-          </div>
-          <div className="data_chart  bg-gray-50 ">
+            </Box>
+          </Box>
+  
+          {/* Chart */}
+          <Box className="data_chart" sx={{ backgroundColor: "#f9fafb" }}>
             <DashBoardChart data={sampleData} />
-          </div>
-        </div>
-        <div className="r_content w-1/4">
-          <div className="mb-[2rem]">
+          </Box>
+        </Box>
+  
+        {/* Right Content */}
+        <Box className="r_content" sx={{ width: "25%" }}>
+          <Box sx={{ mb: "2rem" }}>
             <DeviceControlCard />
-          </div>
-          <div>
+          </Box>
+          <Box>
             <ActivityHistory activities={activities} />
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
+  
+      {/* Profile Modal */}
       <ProfileModal
         open={openProfile}
         handleClose={() => setOpenProfile(false)}
         profile={profile}
       />
-    </div>
-  );
-}
+    </Box>
+  );}
 
-export default Dashboard;

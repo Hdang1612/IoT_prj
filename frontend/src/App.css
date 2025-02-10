@@ -14,3 +14,33 @@ html {
   display: none;
 }
 
+.filter__modal .inputs-datetime-group {
+  display: grid;
+  grid-template-columns: auto 4rem auto;
+
+  .next-icon {
+    width: 4rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F7F1FF;
+    border-left: 1px solid #ebebeb;
+    border-right: 1px solid #ebebeb;
+    box-sizing: border-box;
+    color: #555;
+    transition: background-color 0.3s ease;
+  }
+}
+.date-time_from {
+  width: 100%;
+  .css-1n04w30-MuiInputBase-root-MuiOutlinedInput-root {
+    border-radius: 0.4rem 0 0 0.4rem;
+  }
+}
+.date-time_to {
+  width: 100%;
+  .css-1n04w30-MuiInputBase-root-MuiOutlinedInput-root {
+    border-radius: 0 0.4rem 0.4rem 0;
+  }
+}
