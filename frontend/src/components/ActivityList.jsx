@@ -1,7 +1,9 @@
+import { useSelector } from "react-redux";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 
-function ActivityHistory({ activities }) {
+function ActivityHistory() {
+  const actionLogs = useSelector((state) => state.device.actionLogs);
   return (
     <div className="bg-[#F7F1FF] p-4 rounded-xl shadow-md w-full">
       <div className="flex items-center justify-between mb-4">
@@ -11,17 +13,26 @@ function ActivityHistory({ activities }) {
           </div>
           <h2 className="text-xl font-extrabold text-black">Activities</h2>
         </div>
-        <button className="text-md cursor-pointer text-blue-500 hover:underline">View All</button>
+        <button className="text-md cursor-pointer text-blue-500 hover:underline">
+          View All
+        </button>
       </div>
 
       <div className="space-y-3">
-        {activities?.length > 0 ? (
-          activities.map((activity, index) => (
-            <div key={index} className="flex items-center gap-3">
+        {actionLogs?.length > 0 ? (
+          actionLogs.map((log, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-3 p-2 bg-white rounded-md shadow-sm"
+            >
               <FlashOnIcon className="text-yellow-500" />
               <div>
-                <p className="font-medium text-[1.2rem]">{activity.message || "Không có nội dung"}</p>
-                <p className="text-sm text-gray-500">{activity.date || "Chưa xác định"}</p>
+                <p className="font-medium text-[1.2rem]">
+                  {`Turn ${log.action} the ${log.device_name}`}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {log.timestamp || "NAN"}
+                </p>
               </div>
             </div>
           ))

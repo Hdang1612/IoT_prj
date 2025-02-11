@@ -1,9 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit'
-import dataReducer from './data/DataSlice'
+import { configureStore } from "@reduxjs/toolkit";
+import dataReducer from "./data/DataSlice";
+import deviceReducer from "./data/DeviceSlice";
 const store = configureStore({
   reducer: {
-    data: dataReducer,
+    sensor: dataReducer,
+    device: deviceReducer,
   },
-})
+});
 
-export default store
+export default store;

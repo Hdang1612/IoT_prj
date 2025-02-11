@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import FeedRoundedIcon from '@mui/icons-material/FeedRounded';
 import { Typography } from "@mui/material";
 function Sidebar() {
   const location = useLocation();
@@ -24,7 +24,7 @@ function Sidebar() {
         to="/profile"
         className={`_nav ${isActive("/profile") ? "active" : ""}`}
       >
-        <AccountCircleRoundedIcon sx={{ fontSize: 50, color: "#8F00FF" }} />
+        <FeedRoundedIcon sx={{ fontSize: 50, color: "#8F00FF" }} />
         <Typography className="nav_text">Info</Typography>
       </Link>
     </div>

@@ -11,6 +11,7 @@ const db = await mysql.createPool({
   user: MYSQL_USER,
   password: MYSQL_PASSWORD,
   database: "iot",
+  timezone: "+07:00",
 });
 
 export default db;

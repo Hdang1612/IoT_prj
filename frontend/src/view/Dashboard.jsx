@@ -63,7 +63,7 @@ export default function Dashboard() {
           <TextField
             placeholder="Tìm kiếm"
             variant="standard"
-            InputProps={{ disableUnderline: true, sx: { fontSize: "2rem", width: "100%" } }}
+            InputProps={{ disableUnderline: true, sx: { fontSize: "2rem" } }}
             fullWidth
           />
         </Box>

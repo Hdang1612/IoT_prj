@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import TableData from "../components/Table";
 import {
@@ -11,48 +11,37 @@ import {
   InputLabel,
   TextField,
   Typography,
+  Pagination,
+  Button,
 } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-const sensorColumns = [
-  { id: "timestamp", label: "Timestamp" },
-  { id: "temperature", label: "Temperature (°C)" },
-  { id: "humidity", label: "Humidity (%)" },
-];
 
-const sensorData = [
-  { timestamp: "2025-02-10 10:00", temperature: 25, humidity: 60 },
-  { timestamp: "2025-02-10 11:00", temperature: 26, humidity: 58 },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { getSensorData, setSensorPage } from "../redux/data/DataSlice";
+import { getDeviceData, setDevicePage } from "../redux/data/DeviceSlice";
 
-const deviceLogsColumns = [
-  { id: "logId", label: "Log ID" },
-  { id: "device", label: "Device" },
-  { id: "status", label: "Status" },
-  { id: "timestamp", label: "Timestamp" },
-];
-
-const deviceLogsData = [
-  {
-    logId: "001",
-    device: "Smart TV",
-    status: "On",
-    timestamp: "2025-02-10 09:00",
-  },
-  {
-    logId: "002",
-    device: "WiFi",
-    status: "Off",
-    timestamp: "2025-02-10 10:30",
-  },
-];
+import { sensorColumns } from "../utils/collums";
+import { deviceLogsColumns } from "../utils/collums";
 
 function Profile() {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedDevice, setSelectedDevice] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  const dispatch = useDispatch();
+  const sensor = useSelector((state) => state.sensor);
+  const device = useSelector((state) => state.device);
+  useEffect(() => {
+    // if (activeTab === 0) {
+    //   dispatch(getSensorData({ page: sensor.currentPage }));
+    // } else {
+    //   dispatch(getDeviceData({ page: device.currentPage }));
+    // }
+    handleFilter();
+  }, [activeTab, sensor.currentPage, device.currentPage]);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -61,12 +50,37 @@ function Profile() {
     setEndDate(null);
   };
 
+  const handlePageChange = (event, value) => {
+    if (activeTab === 0) {
+      dispatch(setSensorPage(value));
+      // dispatch(getSensorData({ page: value }));
+    } else {
+      dispatch(setDevicePage(value));
+      // dispatch(getDeviceData({ page: value }));
+    }
+  };
+
+  const handleFilter = () => {
+    const queryParams = {
+      // device: selectedDevice,
+      startDate: startDate ? startDate.toISOString() : null,
+      endDate: endDate ? endDate.toISOString() : null,
+      page: activeTab === 0 ? sensor.currentPage : device.currentPage,
+    };
+
+    if (activeTab === 0) {
+      dispatch(getSensorData(queryParams));
+    } else {
+      dispatch(getDeviceData(queryParams));
+    }
+  };
+
   return (
     <Box>
       <p className="uppercase font-[700] text-[2rem] my-5">table data</p>
 
       {/* Filter */}
-      <Box className="flex gap-[4rem] my-[2rem] filter__modal items-center ">
+      <Box className="flex gap-[4rem] my-[2rem] h-[5rem] filter__modal items-center ">
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
           Filter:
         </Typography>
@@ -93,7 +107,7 @@ function Profile() {
               label="Start Date"
               value={startDate}
               onChange={setStartDate}
-              disabled={activeTab === 0}
+              // disabled={activeTab === 0}
               renderInput={(params) => <TextField {...params} fullWidth />}
               slotProps={{
                 textField: {
@@ -116,7 +130,7 @@ function Profile() {
               label="End Date"
               value={endDate}
               onChange={setEndDate}
-              disabled={activeTab === 0}
+              // disabled={activeTab === 0}
               renderInput={(params) => <TextField {...params} fullWidth />}
               slotProps={{
                 textField: {
@@ -133,6 +147,20 @@ function Profile() {
             />
           </LocalizationProvider>
         </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleFilter()}
+          sx={{
+            height: "5rem",
+            fontWeight: "bold",
+            width: "10rem",
+            padding: "4px",
+            fontSize: "1.4rem",
+          }}
+        >
+          Filter
+        </Button>
       </Box>
 
       {/* content */}
@@ -172,11 +200,19 @@ function Profile() {
       </Tabs>
 
       {activeTab === 0 && (
-        <TableData columns={sensorColumns} data={sensorData} />
+        <TableData columns={sensorColumns} data={sensor.sensorData} />
       )}
       {activeTab === 1 && (
-        <TableData columns={deviceLogsColumns} data={deviceLogsData} />
+        <TableData columns={deviceLogsColumns} data={device.actionLogs} />
       )}
+      <Pagination
+        count={activeTab === 0 ? sensor.totalPages : device.totalPages}
+        page={activeTab === 0 ? sensor.currentPage : device.currentPage}
+        onChange={handlePageChange}
+        color="primary"
+        sx={{ display: "flex", justifyContent: "center", mt: 2 }}
+        size="large"
+      />
     </Box>
   );
 }
