@@ -10,7 +10,7 @@ export const fetchActionLogs = async (req, res) => {
     const { startDate, endDate } = req.query;
     const result = await getActionLogsService(page, limit, startDate, endDate);
 
-    res.status(200).json(result);
+    res.status(200).json({ messsage: "fetch sensor data successfull", data: result});
   } catch (error) {
     console.error("Error fetching action logs:", error);
     res.status(500).json({ error: "Internal Server Error" });
