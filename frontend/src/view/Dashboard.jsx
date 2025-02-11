@@ -79,7 +79,7 @@ export default function Dashboard() {
             src="/assets/476159892_606573272129995_3942815568264271579_n.jpg"
             alt="user"
           />
-          <Typography sx={{ fontSize: "2.2rem" }}>To Hai Dang</Typography>
+          <Typography sx={{ fontSize: "2.2rem" }}>{profile.name}</Typography>
         </Box>
       </Box>
   

@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
+import { Link } from "react-router-dom";
 
 function ActivityHistory() {
   const actionLogs = useSelector((state) => state.device.actionLogs);
@@ -13,9 +14,9 @@ function ActivityHistory() {
           </div>
           <h2 className="text-xl font-extrabold text-black">Activities</h2>
         </div>
-        <button className="text-md cursor-pointer text-blue-500 hover:underline">
+        <Link to="/profile" className="text-md cursor-pointer text-blue-500 hover:underline">
           View All
-        </button>
+        </Link>
       </div>
 
       <div className="space-y-3">

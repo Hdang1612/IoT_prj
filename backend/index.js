@@ -7,7 +7,7 @@ import cors from "cors";
 
 import routeSensorData from "./routes/sensorDataRoutes.js";
 import routeActionData from "./routes/actionRoutes.js";
-
+import routeDevice from "./routes/deviceRoutes.js";
 const app = express();
 app.use(cors());
 app.use(bodyParser.json()); // mọi yêu cầu http đều đi qua middleware này trước khi được route handler xử lý ,
@@ -26,3 +26,4 @@ db.query("SELECT 1")
 
 app.use("/api/data",routeSensorData)
 app.use("/api/action",routeActionData)
+app.use("/api/device",routeDevice)

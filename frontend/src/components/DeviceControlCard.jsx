@@ -1,33 +1,63 @@
-import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
+import { useDispatch } from "react-redux";
+import { getDeviceData } from "../redux/data/DeviceSlice";
+import { fetchDeviceList,toggleAction } from "../service/service";
 
-// Danh sách thiết bị với deviceId tương ứng
+
+
 const devices = [
-  { id: 1, name: "Ceiling Fan", color: "bg-orange-500", icon: <SettingsIcon sx={{ fontSize: 30 }} /> },
-  { id: 2, name: "Light", color: "bg-purple-500", icon: <LightbulbIcon sx={{ fontSize: 30 }} /> },
-  { id: 3, name: "Air Conditioner", color: "bg-gray-500", icon: <AcUnitIcon sx={{ fontSize: 30 }} /> },
+  {
+    id: 1,
+    name: "Ceiling Fan",
+    color: "bg-orange-500",
+    icon: <SettingsIcon sx={{ fontSize: 30 }} />,
+  },
+  {
+    id: 2,
+    name: "Light",
+    color: "bg-purple-500",
+    icon: <LightbulbIcon sx={{ fontSize: 30 }} />,
+  },
+  {
+    id: 3,
+    name: "Air Conditioner",
+    color: "bg-gray-500",
+    icon: <AcUnitIcon sx={{ fontSize: 30 }} />,
+  },
 ];
 
 export default function DeviceControlCard() {
-  const [deviceStatus, setDeviceStatus] = useState({
-    1: false, 
-    2: true, 
-    3: true,  
-  });
+  const [deviceStatus, setDeviceStatus] = useState({});
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchDeviceStatus = async () => {
+      try {
+        const response = await fetchDeviceList();
+        const statusMap = {};
+        response.data.forEach((device) => {
+          statusMap[device.id] = device.status;
+        });
+        setDeviceStatus(statusMap);
+        dispatch(getDeviceData({ page: 1 }));
+      } catch (error) {
+        console.error("Error fetching device status:", error);
+      }
+    };
 
-  // Hàm toggle thiết bị và gọi API
+    fetchDeviceStatus();
+  }, []);
+
   const toggleDevice = async (deviceId) => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/action/toggle/${deviceId}`);
+      await toggleAction(deviceId);
       setDeviceStatus((prevState) => ({
         ...prevState,
         [deviceId]: !prevState[deviceId],
       }));
-      
-      console.log(response.data.message); 
+      dispatch(getDeviceData({ page: 1 })); // Cập nhật actionLogs
     } catch (error) {
       console.error("Error toggling device:", error);
     }
