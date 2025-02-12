@@ -34,6 +34,7 @@ function Profile() {
   const dispatch = useDispatch();
   const sensor = useSelector((state) => state.sensor);
   const device = useSelector((state) => state.device);
+
   useEffect(() => {
     // if (activeTab === 0) {
     //   dispatch(getSensorData({ page: sensor.currentPage }));
@@ -62,7 +63,7 @@ function Profile() {
 
   const handleFilter = () => {
     const queryParams = {
-      // device: selectedDevice,
+      deviceId: selectedDevice,
       startDate: startDate ? startDate.toISOString() : null,
       endDate: endDate ? endDate.toISOString() : null,
       page: activeTab === 0 ? sensor.currentPage : device.currentPage,
@@ -94,9 +95,11 @@ function Profile() {
             label="Device"
             sx={{ fontSize: "1rem" }}
           >
-            <MenuItem value="">All Devices</MenuItem>
-            <MenuItem value="Smart TV">Smart TV</MenuItem>
-            <MenuItem value="WiFi">WiFi</MenuItem>
+            {device.devices.map((device) => (
+              <MenuItem key={device.id} value={device.id}>
+                {device.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
 

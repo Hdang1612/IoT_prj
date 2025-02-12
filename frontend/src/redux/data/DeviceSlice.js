@@ -1,24 +1,27 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { fetchActionLogs } from "../../service/service";
+import { fetchActionLogs, fetchDeviceList } from "../../service/service";
 
 export const getDeviceData = createAsyncThunk(
   "device/fetchData",
   async (params, { rejectWithValue }) => {
     try {
-      const res = await fetchActionLogs(params);
-      return res.data;
+      const res1 = await fetchActionLogs(params);
+      const res2 = await fetchDeviceList();
+      return {
+        actionLogs: res1.data,
+        devices: res2.data,
+      };
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-
 const deviceSlice = createSlice({
   name: "device",
   initialState: {
-    sensorData: [],
+    devices: [],
     actionLogs: [],
     totalItems: null,
     itemCount: null,
@@ -40,11 +43,11 @@ const deviceSlice = createSlice({
     builder
       .addCase(getDeviceData.pending, () => {})
       .addCase(getDeviceData.fulfilled, (state, action) => {
-        state.actionLogs = action.payload.data.data;
-        state.currentPage = action.payload.data.currentPage;
-        // state.itemsPerPage = action.payload.itemsPerPage;
-        state.totalItems = action.payload.data.totalItems;
-        state.totalPages = action.payload.data.totalPages;
+        state.actionLogs = action.payload.actionLogs.data.data;
+        state.currentPage = action.payload.actionLogs.data.currentPage;
+        state.totalItems = action.payload.actionLogs.data.totalItems;
+        state.totalPages = action.payload.actionLogs.data.totalPages;
+        state.devices = action.payload.devices;
       })
       .addCase(getDeviceData.rejected, () => {});
 
