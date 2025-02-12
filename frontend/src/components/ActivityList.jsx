@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import { Link } from "react-router-dom";
+import formatDate from "../utils/date";
 
 function ActivityHistory() {
   const actionLogs = useSelector((state) => state.device.actionLogs);
@@ -32,7 +33,7 @@ function ActivityHistory() {
                   {`Turn ${log.action} the ${log.device_name}`}
                 </p>
                 <p className="text-sm text-gray-500">
-                  {log.timestamp || "NAN"}
+                  {formatDate(log.timestamp) || "NAN"}
                 </p>
               </div>
             </div>
