@@ -16,10 +16,10 @@ function DashBoardCard({ type, value, unit }) {
       <div>
         <h3 className="text-[2rem] font-semibold capitalize">
           {type === "humidity"
-            ? "Độ Ẩm"
+            ? "Humidity"
             : type === "temperature"
-            ? "Nhiệt Độ"
-            : "Ánh Sáng"}
+            ? "Temperature"
+            : "Light intensity"}
         </h3>
         <p className="text-3xl font-bold text-gray-700">
           {value} <span className="text-base text-gray-500">{unit}</span>

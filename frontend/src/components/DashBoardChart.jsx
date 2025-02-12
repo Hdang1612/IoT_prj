@@ -26,7 +26,7 @@ function DashBoardChart({ data }) {
     labels: data.map((item) => item.timestamp),
     datasets: [
       {
-        label: "Độ Ẩm (%)",
+        label: "Humidity (%)",
         data: data.map((item) => item.humidity),
         borderColor: "#3B82F6", 
         backgroundColor: "rgba(59, 130, 246, 0.2)",
@@ -34,7 +34,7 @@ function DashBoardChart({ data }) {
         fill: true, 
       },
       {
-        label: "Nhiệt Độ (°C)",
+        label: "Temperature (°C)",
         data: data.map((item) => item.temperature),
         borderColor: "#EF4444",
         backgroundColor: "rgba(239, 68, 68, 0.2)",
@@ -42,7 +42,7 @@ function DashBoardChart({ data }) {
         fill: true,
       },
       {
-        label: "Ánh Sáng (Lux)",
+        label: "Light Intensity (Lux)",
         data: data.map((item) => item.light_itensity),
         borderColor: "#FACC15", 
         backgroundColor: "rgba(250, 204, 21, 0.2)",
