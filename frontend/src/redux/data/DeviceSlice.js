@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { fetchActionLogs, toggleAction } from "../../service/service";
+import { fetchActionLogs } from "../../service/service";
 
 export const getDeviceData = createAsyncThunk(
   "device/fetchData",
@@ -14,17 +14,6 @@ export const getDeviceData = createAsyncThunk(
   }
 );
 
-export const toggleDeviceStatus = createAsyncThunk(
-  "device/toggle",
-  async (data, { rejectWithValue }) => {
-    try {
-      const res = await toggleAction(data);
-      return res;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
 
 const deviceSlice = createSlice({
   name: "device",
@@ -58,6 +47,13 @@ const deviceSlice = createSlice({
         state.totalPages = action.payload.data.totalPages;
       })
       .addCase(getDeviceData.rejected, () => {});
+
+    // builder
+    //   .addCase(toggleDeviceStatus.pending, () => {})
+    //   .addCase(toggleDeviceStatus.fulfilled, (state, action) => {
+    //     state.actionLogs = action.payload.data.data;
+    //   })
+    //   .addCase(toggleDeviceStatus.rejected, () => {});
   },
 });
 
