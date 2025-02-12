@@ -1,7 +1,7 @@
 import db from "../config/db.js";
 import { v4 as uuidv4 } from "uuid";
 
-export const getActionLogsService = async (page, limit, startDate, endDate) => {
+export const getActionLogsService = async (page, limit, startDate, endDate,deviceId) => {
   const offset = (page - 1) * limit;
   let sql = `
         SELECT al.id, d.name AS device_name, al.action, al.timestamp
@@ -19,6 +19,10 @@ export const getActionLogsService = async (page, limit, startDate, endDate) => {
   if (endDate) {
     conditions.push("al.timestamp <= ?");
     params.push(endDate);
+  }
+  if(deviceId) {
+    conditions.push("al.device_id = ?");
+    params.push(deviceId);
   }
 
   if (conditions.length > 0) {

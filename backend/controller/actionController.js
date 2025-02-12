@@ -9,8 +9,8 @@ export const fetchActionLogs = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 5;
-    const { startDate, endDate } = req.query;
-    const result = await getActionLogsService(page, limit, startDate, endDate);
+    const { startDate, endDate,deviceId } = req.query;
+    const result = await getActionLogsService(page, limit, startDate, endDate,deviceId);
 
     res
       .status(200)
