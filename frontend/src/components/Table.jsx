@@ -11,12 +11,13 @@ import formatDate from "../utils/date.js";
 
 function TableData({ columns, data }) {
   return (
-    <TableContainer
+    <TableContainer 
       component={Paper}
-      className="shadow-md rounded-xl overflow-hidden"
+      className="shadow-md rounded-xl overflowY-auto"
+      sx={{ maxHeight: "40rem" }}
     >
-      <Table>
-        <TableHead>
+      <Table stickyHeader>
+        <TableHead >
           <TableRow className="bg-[#F7F1FF]">
             {columns.map((column) => (
               <TableCell
@@ -34,7 +35,7 @@ function TableData({ columns, data }) {
             ))}
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody className="table_body">
           {data.length === 0 ? (
             <TableRow>
               <TableCell
@@ -74,29 +75,6 @@ function TableData({ columns, data }) {
               </TableRow>
             ))
           )}
-          {/* {data.map((row, index) => (
-            <TableRow
-              key={index}
-              className="hover:bg-gray-100 transition duration-300"
-            >
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  sx={{
-                    fontSize: "1.2rem",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    color: "#000",
-                    py: 2,
-                  }}
-                >
-                  {column.id === "timestamp"
-                    ? formatDate(row[column.id]) // Định dạng nếu là timestamp
-                    : row[column.id]}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))} */}
         </TableBody>
       </Table>
     </TableContainer>

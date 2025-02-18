@@ -25,7 +25,7 @@ const deviceSlice = createSlice({
     actionLogs: [],
     totalItems: null,
     itemCount: null,
-    itemsPerPage: 10,
+    itemsPerPage: 5,
     totalPages: null,
     currentPage: 1,
     status: "",
@@ -35,7 +35,7 @@ const deviceSlice = createSlice({
     setDevicePage: (state, action) => {
       state.currentPage = action.payload;
     },
-    setPageSize: (state, action) => {
+    setDevicePageSize: (state, action) => {
       state.itemsPerPage = action.payload;
     },
   },
@@ -44,7 +44,7 @@ const deviceSlice = createSlice({
       .addCase(getDeviceData.pending, () => {})
       .addCase(getDeviceData.fulfilled, (state, action) => {
         state.actionLogs = action.payload.actionLogs.data.data;
-        state.currentPage = action.payload.actionLogs.data.currentPage;
+        // state.currentPage = action.payload.actionLogs.data.currentPage;
         state.totalItems = action.payload.actionLogs.data.totalItems;
         state.totalPages = action.payload.actionLogs.data.totalPages;
         state.devices = action.payload.devices;
@@ -60,5 +60,5 @@ const deviceSlice = createSlice({
   },
 });
 
-export const { setDevicePage, setPageSize } = deviceSlice.actions;
+export const { setDevicePage, setDevicePageSize } = deviceSlice.actions;
 export default deviceSlice.reducer;

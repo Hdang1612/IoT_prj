@@ -19,8 +19,16 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getSensorData, setSensorPage } from "../redux/data/DataSlice";
-import { getDeviceData, setDevicePage } from "../redux/data/DeviceSlice";
+import {
+  getSensorData,
+  setSensorPage,
+  setSensorPageSize,
+} from "../redux/data/DataSlice";
+import {
+  getDeviceData,
+  setDevicePage,
+  setDevicePageSize,
+} from "../redux/data/DeviceSlice";
 
 import { sensorColumns } from "../utils/collums";
 import { deviceLogsColumns } from "../utils/collums";
@@ -34,6 +42,9 @@ function Profile() {
   const dispatch = useDispatch();
   const sensor = useSelector((state) => state.sensor);
   const device = useSelector((state) => state.device);
+  const itemsPerPage = useSelector((state) =>
+    activeTab === 0 ? state.sensor.itemsPerPage : state.device.itemsPerPage
+  );
 
   useEffect(() => {
     // if (activeTab === 0) {
@@ -42,7 +53,7 @@ function Profile() {
     //   dispatch(getDeviceData({ page: device.currentPage }));
     // }
     handleFilter();
-  }, [activeTab, sensor.currentPage, device.currentPage]);
+  }, [activeTab, sensor.currentPage, device.currentPage, device.itemsPerPage]);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -61,12 +72,22 @@ function Profile() {
     }
   };
 
+  const handleItemsPerPageChange = (event) => {
+    const newSize = event.target.value;
+    if (activeTab === 0) {
+      dispatch(setSensorPageSize(newSize));
+    } else {
+      dispatch(setDevicePageSize(newSize));
+    }
+  };
+
   const handleFilter = () => {
     const queryParams = {
       deviceId: selectedDevice,
       startDate: startDate ? startDate.toISOString() : null,
       endDate: endDate ? endDate.toISOString() : null,
       page: activeTab === 0 ? sensor.currentPage : device.currentPage,
+      limit : activeTab === 0 ? sensor.itemsPerPage : device.itemsPerPage
     };
 
     if (activeTab === 0) {
@@ -81,6 +102,42 @@ function Profile() {
       <p className="uppercase font-[700] text-[2rem] my-5">table data</p>
 
       {/* Filter */}
+
+      {/* content */}
+      <Tabs
+        value={activeTab}
+        onChange={handleTabChange}
+        indicatorColor="#fff"
+        textColor="primary"
+        variant="fullWidth"
+      >
+        <Tab
+          sx={{
+            fontSize: "16px",
+            color: activeTab === 0 ? "#09006F" : "gray",
+            textDecoration: activeTab === 0 ? "underline" : "none",
+            "&:hover": {
+              backgroundColor: "#f0f4ff",
+              color: "#09006F",
+            },
+            fontWeight: "bold",
+          }}
+          label="Sensor Data"
+        />
+        <Tab
+          sx={{
+            fontSize: "16px",
+            color: activeTab === 1 ? "#09006F" : "gray",
+            textDecoration: activeTab === 1 ? "underline" : "none",
+            fontWeight: "bold",
+            "&:hover": {
+              backgroundColor: "#f0f4ff",
+              color: "#09006F",
+            },
+          }}
+          label="Device Logs"
+        />
+      </Tabs>
       <Box className="flex gap-[4rem] my-[2rem] h-[5rem] filter__modal items-center ">
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
           Filter:
@@ -164,43 +221,18 @@ function Profile() {
         >
           Filter
         </Button>
+        <FormControl sx={{ ml: "auto", minWidth: 120 }}>
+          <Select
+            value={itemsPerPage}
+            onChange={handleItemsPerPageChange}
+            sx={{ fontSize: "1rem" }}
+          >
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
-
-      {/* content */}
-      <Tabs
-        value={activeTab}
-        onChange={handleTabChange}
-        indicatorColor="#fff"
-        textColor="primary"
-        variant="fullWidth"
-      >
-        <Tab
-          sx={{
-            fontSize: "16px",
-            color: activeTab === 0 ? "#09006F" : "gray",
-            textDecoration: activeTab === 0 ? "underline" : "none",
-            "&:hover": {
-              backgroundColor: "#f0f4ff",
-              color: "#09006F",
-            },
-            fontWeight: "bold",
-          }}
-          label="Sensor Data"
-        />
-        <Tab
-          sx={{
-            fontSize: "16px",
-            color: activeTab === 1 ? "#09006F" : "gray",
-            textDecoration: activeTab === 1 ? "underline" : "none",
-            fontWeight: "bold",
-            "&:hover": {
-              backgroundColor: "#f0f4ff",
-              color: "#09006F",
-            },
-          }}
-          label="Device Logs"
-        />
-      </Tabs>
 
       {activeTab === 0 && (
         <TableData columns={sensorColumns} data={sensor.sensorData} />
