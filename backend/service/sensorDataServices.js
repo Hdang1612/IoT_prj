@@ -24,7 +24,7 @@ export const getSensorDataService = async (
     params.push(`%${search}%`);
   }
   if (conditions.length > 0) {
-    sql += " WHERE " + conditions.join(" AND ");
+    sql += " WHERE " + conditions;
   }
 
   if (orderBy && validFields.includes(orderBy)) {
