@@ -5,6 +5,8 @@ import db from "./config/db.js";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
+import { WebSocketServer } from "ws"; 
+import http from "http";
 
 import routeSensorData from "./routes/sensorDataRoutes.js";
 import routeActionData from "./routes/actionRoutes.js";
@@ -15,6 +17,22 @@ dotenv.config();
 
 app.use(cors());
 app.use(bodyParser.json()); 
+
+// websocket
+const server = http.createServer(app);
+
+const wss = new WebSocketServer({ server });
+wss.on("connection", (ws) => {
+  console.log("Client connected to WebSocket");
+
+  ws.on("message", (message) => {
+    console.log(`Received message: ${message}`);
+  });
+
+  ws.on("close", () => {
+    console.log("Client disconnected");
+  });
+});
 
 const PORT = process.env.PORT || 3000;
 
