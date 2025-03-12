@@ -27,13 +27,15 @@ const dataSlice = createSlice({
     status: "",
     loading: false,
   },
-  reducers: {},
-  setSensorPage: (state, action) => {
-    state.currentPage = action.payload;
+  reducers: {
+    setSensorPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+    setSensorPageSize: (state, action) => {
+      state.itemsPerPage = action.payload;
+    },
   },
-  setSensorPageSize: (state, action) => {
-    state.itemsPerPage = action.payload;
-  },
+
   extraReducers: (builder) => {
     builder
       .addCase(getSensorData.pending, () => {})

@@ -14,9 +14,6 @@ import {
   Pagination,
   Button,
 } from "@mui/material";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -35,9 +32,9 @@ import { deviceLogsColumns } from "../utils/collums";
 
 function Profile() {
   const [activeTab, setActiveTab] = useState(0);
+  const [searchTxt, setSearchTxt] = useState("");
+  const [selectedField, setSelectedField] = useState("");
   const [selectedDevice, setSelectedDevice] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
 
   const dispatch = useDispatch();
   const sensor = useSelector((state) => state.sensor);
@@ -53,13 +50,11 @@ function Profile() {
     //   dispatch(getDeviceData({ page: device.currentPage }));
     // }
     handleFilter();
-  }, [activeTab, sensor.currentPage, device.currentPage, device.itemsPerPage]);
+  }, [activeTab, sensor.currentPage, device.currentPage, device.itemsPerPage,sensor.itemsPerPage]);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
     setSelectedDevice("");
-    setStartDate(null);
-    setEndDate(null);
   };
 
   const handlePageChange = (event, value) => {
@@ -75,6 +70,7 @@ function Profile() {
   const handleItemsPerPageChange = (event) => {
     const newSize = event.target.value;
     if (activeTab === 0) {
+      console.log(">>>>>>>>>")
       dispatch(setSensorPageSize(newSize));
     } else {
       dispatch(setDevicePageSize(newSize));
@@ -83,11 +79,11 @@ function Profile() {
 
   const handleFilter = () => {
     const queryParams = {
-      deviceId: selectedDevice,
-      startDate: startDate ? startDate.toISOString() : null,
-      endDate: endDate ? endDate.toISOString() : null,
+      // deviceId: selectedDevice,
+      field: selectedField,
+      search: searchTxt,
       page: activeTab === 0 ? sensor.currentPage : device.currentPage,
-      limit : activeTab === 0 ? sensor.itemsPerPage : device.itemsPerPage
+      limit: activeTab === 0 ? sensor.itemsPerPage : device.itemsPerPage,
     };
 
     if (activeTab === 0) {
@@ -100,8 +96,6 @@ function Profile() {
   return (
     <Box>
       <p className="uppercase font-[700] text-[2rem] my-5">table data</p>
-
-      {/* Filter */}
 
       {/* content */}
       <Tabs
@@ -138,75 +132,85 @@ function Profile() {
           label="Device Logs"
         />
       </Tabs>
+      {/* Filter */}
+      {/* <Box className="flex gap-4 my-4 items-center">
+        {activeTab === 0 ? (
+          <>
+            <FormControl sx={{ width: "12rem" }}>
+              <InputLabel>Field</InputLabel>
+              <Select value={selectedField} onChange={(e) => setSelectedField(e.target.value)}>
+                <MenuItem value="id">ID</MenuItem>
+                <MenuItem value="temperature">Temperature</MenuItem>
+                <MenuItem value="humidity">Humidity</MenuItem>
+                <MenuItem value="light">Light</MenuItem>
+                <MenuItem value="timestamp">Timestamp</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField label="Search Value" value={searchTxt} onChange={(e) => setSearchTxt(e.target.value)} fullWidth />
+          </>
+        ) : (
+          <>
+            <FormControl sx={{ width: "12rem" }}>
+              <InputLabel>Device</InputLabel>
+              <Select value={selectedDevice} onChange={(e) => setSelectedDevice(e.target.value)}>
+                {device.devices.map((dev) => (
+                  <MenuItem key={dev.id} value={dev.id}>{dev.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField label="Timestamp" value={searchTxt} onChange={(e) => setSearchTxt(e.target.value)} fullWidth />
+          </>
+        )}
+        <Button variant="contained" color="primary" onClick={handleFilter}>Search</Button>
+      </Box> */}
       <Box className="flex gap-[4rem] my-[2rem] h-[5rem] filter__modal items-center ">
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
           Filter:
         </Typography>
-        <FormControl sx={{ width: "20rem" }} disabled={activeTab === 0}>
-          <InputLabel sx={{ fontSize: 12, fontWeight: "700" }}>
-            Device
-          </InputLabel>
-          <Select
-            value={selectedDevice}
-            onChange={(e) => setSelectedDevice(e.target.value)}
-            label="Device"
-            sx={{ fontSize: "1rem" }}
-          >
-            {device.devices.map((device) => (
-              <MenuItem key={device.id} value={device.id}>
-                {device.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        {activeTab === 0 ? (
+          <FormControl sx={{ width: "12rem" }}>
+            <InputLabel sx={{ fontSize: 12, fontWeight: "700" }}>
+              Field
+            </InputLabel>
+            <Select
+              value={selectedField}
+              onChange={(e) => setSelectedField(e.target.value)}
+              label="Field"
+              sx={{ fontSize: "1rem" }}
+            >
+              <MenuItem value="id">ID</MenuItem>
+              <MenuItem value="temperature">Temperature</MenuItem>
+              <MenuItem value="humidity">Humidity</MenuItem>
+              <MenuItem value="light_intensity">Light</MenuItem>
+              <MenuItem value="timestamp">Timestamp</MenuItem>
+            </Select>
+          </FormControl>
+        ) : (
+          <FormControl sx={{ width: "12rem" }} disabled={activeTab === 0}>
+            <InputLabel sx={{ fontSize: 12, fontWeight: "700" }}>
+              Device
+            </InputLabel>
+            <Select
+              value={selectedDevice}
+              onChange={(e) => setSelectedDevice(e.target.value)}
+              label="Device"
+              sx={{ fontSize: "1rem" }}
+            >
+              {device.devices.map((device) => (
+                <MenuItem key={device.id} value={device.id}>
+                  {device.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+        <TextField
+          sx={{ width: "24rem" }}
+          label="TimeStamp"
+          value={searchTxt}
+          onChange={(e) => setSearchTxt(e.target.value)}
+        />
 
-        <Box className="inputs-datetime-group">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-              className="date-time_from"
-              label="Start Date"
-              value={startDate}
-              onChange={setStartDate}
-              // disabled={activeTab === 0}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  sx: { fontSize: "1.4rem" },
-                  InputLabelProps: {
-                    sx: {
-                      fontSize: "1.2rem",
-                      fontWeight: "bold",
-                    },
-                  },
-                },
-              }}
-            />
-            <Box className="next-icon">
-              <KeyboardArrowRightIcon sx={{ fontSize: 24 }} />
-            </Box>
-            <DateTimePicker
-              className="date-time_to"
-              label="End Date"
-              value={endDate}
-              onChange={setEndDate}
-              // disabled={activeTab === 0}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  sx: { fontSize: "1.4rem" },
-                  InputLabelProps: {
-                    sx: {
-                      fontSize: "1.2rem",
-                      fontWeight: "bold",
-                    },
-                  },
-                },
-              }}
-            />
-          </LocalizationProvider>
-        </Box>
         <Button
           variant="contained"
           color="primary"
@@ -219,7 +223,7 @@ function Profile() {
             fontSize: "1.4rem",
           }}
         >
-          Filter
+          Search
         </Button>
         <FormControl sx={{ ml: "auto", minWidth: 120 }}>
           <Select

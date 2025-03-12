@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 export const getActionLogsService = async (
   page,
   limit,
-  timestamp,
+  search,
   deviceId
 ) => {
   const offset = (page - 1) * limit;
@@ -17,9 +17,9 @@ export const getActionLogsService = async (
   let conditions = [];
   let params = [];
 
-  if (timestamp) {
+  if (search) {
     conditions.push("al.timestamp LIKE ?");
-    params.push(`%${timestamp}%`);
+    params.push(`%${search}%`);
   }
 
   if (deviceId) {

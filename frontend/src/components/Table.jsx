@@ -7,17 +7,35 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 import formatDate from "../utils/date.js";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { getSensorData } from "../redux/data/DataSlice.js";
 
 function TableData({ columns, data }) {
+  const dispatch = useDispatch();
+  const [sortBy, setSortBy] = useState(null);
+  const [sortType, setSortType] = useState("ASC");
+  const handleSort = (columnId) => {
+    // Nếu click cùng một cột, đổi ASC ↔ DESC
+    const newSortType =
+      sortBy === columnId && sortType === "ASC" ? "DESC" : "ASC";
+
+    setSortBy(columnId);
+    setSortType(newSortType);
+
+    // Dispatch action gọi API với sortBy & sortType
+    dispatch(getSensorData({ orderBy: columnId, orderType: newSortType }));
+  };
   return (
-    <TableContainer 
+    <TableContainer
       component={Paper}
       className="shadow-md rounded-xl overflowY-auto"
       sx={{ maxHeight: "40rem" }}
     >
       <Table stickyHeader>
-        <TableHead >
+        <TableHead>
           <TableRow className="bg-[#F7F1FF]">
             {columns.map((column) => (
               <TableCell
@@ -28,9 +46,29 @@ function TableData({ columns, data }) {
                   textAlign: "center",
                   color: "#000",
                   py: 3,
+                  cursor: "pointer",
                 }}
+                onClick={() => handleSort(column.id)}
               >
-                {column.label}
+                {column.label}{" "}
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: 30,
+                    textAlign: "center",
+                  }}
+                >
+                  {sortBy === column.id && (
+                    <ArrowDropUpRoundedIcon
+                      sx={{
+                        fontSize: 40,
+                        transform:
+                          sortType === "DESC" ? "rotate(180deg)" : "none",
+                        transition: "transform 0.2s ease-in-out",
+                      }}
+                    />
+                  )}
+                </span>
               </TableCell>
             ))}
           </TableRow>

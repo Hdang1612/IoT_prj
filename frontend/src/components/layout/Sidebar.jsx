@@ -25,7 +25,7 @@ function Sidebar() {
         className={`_nav ${isActive("/profile") ? "active" : ""}`}
       >
         <FeedRoundedIcon sx={{ fontSize: 50, color: "#8F00FF" }} />
-        <Typography className="nav_text">Info</Typography>
+        <Typography className="nav_text">Data</Typography>
       </Link>
     </div>
   );
