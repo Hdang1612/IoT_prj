@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { getSensorDataService } from "../service/sensorDataServices.js";
+
 dotenv.config();
 
 export const fetchSensorDataList = async (req, res) => {

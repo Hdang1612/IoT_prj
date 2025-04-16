@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getSensorData } from "../redux/data/DataSlice";
+
+import { formatDateChart } from "../utils/date.js";
 
 import { Typography, Box } from "@mui/material";
 
@@ -8,10 +12,24 @@ import DeviceControlCard from "../components/DeviceControlCard";
 import ActivityHistory from "../components/ActivityList";
 import ProfileModal from "../components/Profile";
 import { profile } from "../utils/profile";
-import { sampleData } from "../utils/dummyData";
+// import { sampleData } from "../utils/dummyData";
 
 export default function Dashboard() {
   const [openProfile, setOpenProfile] = useState(false);
+  const dispatch = useDispatch();
+  const sensorData = useSelector((state) => state.sensor.sensorData);
+  const formattedSensorData = sensorData
+    .map((item) => ({
+      ...item,
+      timestamp: formatDateChart(item.timestamp),
+    }))
+    .reverse();
+
+  useEffect(() => {
+    dispatch(
+      getSensorData({ orderBy: "timestamp", orderType: "DESC", limit: 10 })
+    );
+  }, [dispatch]);
   return (
     <Box>
       {/* Header */}
@@ -20,31 +38,6 @@ export default function Dashboard() {
         sx={{ height: "8rem", display: "flex", gap: "3rem", mb: "2rem" }}
       >
         <Box sx={{ width: "66.66%" }}></Box>
-        {/* Search Bar */}
-        {/* <Box
-          className="search__bar"
-          sx={{
-            width: "66.66%",
-            height: "100%",
-            backgroundColor: "#EDEDED",
-            borderRadius: "5rem",
-            display: "flex",
-            alignItems: "center",
-            pl: "2.5rem",
-          }}
-        >
-          <IconButton>
-            <SearchIcon sx={{ fontSize: 38, mr: "2rem" }} />
-          </IconButton>
-          <TextField
-            placeholder="Tìm kiếm"
-            variant="standard"
-            InputProps={{ disableUnderline: true, sx: { fontSize: "2rem" } }}
-            fullWidth
-          />
-        </Box> */}
-
-        {/* User Profile */}
         <Box
           className="user"
           sx={{
@@ -85,19 +78,19 @@ export default function Dashboard() {
             sx={{ display: "flex", gap: "1rem", mb: "2rem" }}
           >
             <Box sx={{ width: "33.33%" }}>
-              <DashBoardCard type="humidity" value={65} unit="%" />
+              <DashBoardCard type="humidity" value={sensorData[0]?.humidity} unit="%" />
             </Box>
             <Box sx={{ width: "33.33%" }}>
-              <DashBoardCard type="temperature" value={28} unit="°C" />
+              <DashBoardCard type="temperature" value={sensorData[0]?.temperature} unit="°C" />
             </Box>
             <Box sx={{ width: "33.33%" }}>
-              <DashBoardCard type="light" value={1200} unit="Lux" />
+              <DashBoardCard type="light" value={sensorData[0]?.light_intensity} unit="Lux" />
             </Box>
           </Box>
 
           {/* Chart */}
           <Box className="data_chart" sx={{ backgroundColor: "#f9fafb" }}>
-            <DashBoardChart data={sampleData} />
+            <DashBoardChart data={formattedSensorData} />
           </Box>
         </Box>
 

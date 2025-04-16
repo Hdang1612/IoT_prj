@@ -11,12 +11,7 @@ export const fetchActionLogs = async (req, res) => {
     const limit = Number(req.query.limit) || 5;
 
     const { search, deviceId } = req.query;
-    const result = await getActionLogsService(
-      page,
-      limit,
-      search,
-      deviceId
-    );
+    const result = await getActionLogsService(page, limit, search, deviceId);
 
     res
       .status(200)
@@ -43,6 +38,9 @@ export const toggleDevice = async (req, res) => {
     });
   } catch (error) {
     console.error("Error toggling device:", error);
+    if (error.status === 404) {
+      return res.status(404).json({ error: "Device not found" });
+    }
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

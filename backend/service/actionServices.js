@@ -1,12 +1,7 @@
 import db from "../config/db.js";
 import { v4 as uuidv4 } from "uuid";
 
-export const getActionLogsService = async (
-  page,
-  limit,
-  search,
-  deviceId
-) => {
+export const getActionLogsService = async (page, limit, search, deviceId) => {
   const offset = (page - 1) * limit;
   let sql = `
         SELECT al.id, d.name AS device_name, al.action, al.timestamp
@@ -18,8 +13,10 @@ export const getActionLogsService = async (
   let params = [];
 
   if (search) {
-    conditions.push("al.timestamp LIKE ?");
-    params.push(`%${search}%`);
+    conditions.push(
+      "(al.timestamp LIKE ? OR DATE_FORMAT(al.timestamp, '%Y-%m-%dT%H:%i:%s.000Z') LIKE ?)"
+    );
+    params.push(`%${search}%`, `%${search}%`);
   }
 
   if (deviceId) {
@@ -62,7 +59,9 @@ export const toggleDeviceStatusService = async (deviceId) => {
   ]);
 
   if (device.length === 0) {
-    throw new Error("Device not found");
+    const error = new Error("Device not found");
+    error.status = 404;
+    throw error;
   }
 
   const currentStatus = device[0].status;

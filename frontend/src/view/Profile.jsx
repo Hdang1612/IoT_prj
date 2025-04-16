@@ -50,7 +50,13 @@ function Profile() {
     //   dispatch(getDeviceData({ page: device.currentPage }));
     // }
     handleFilter();
-  }, [activeTab, sensor.currentPage, device.currentPage, device.itemsPerPage,sensor.itemsPerPage]);
+  }, [
+    activeTab,
+    sensor.currentPage,
+    device.currentPage,
+    device.itemsPerPage,
+    sensor.itemsPerPage,
+  ]);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -70,26 +76,30 @@ function Profile() {
   const handleItemsPerPageChange = (event) => {
     const newSize = event.target.value;
     if (activeTab === 0) {
-      console.log(">>>>>>>>>")
+      console.log(">>>>>>>>>");
       dispatch(setSensorPageSize(newSize));
     } else {
       dispatch(setDevicePageSize(newSize));
     }
   };
+  const queryParamsSensor = {
+    field: selectedField,
+    search: searchTxt,
+    page: activeTab === 0 ? sensor.currentPage : device.currentPage,
+    limit: activeTab === 0 ? sensor.itemsPerPage : device.itemsPerPage,
+  };
+  const queryParamsDevice = {
+    deviceId: selectedDevice,
+    search: searchTxt,
+    page: activeTab === 0 ? sensor.currentPage : device.currentPage,
+    limit: activeTab === 0 ? sensor.itemsPerPage : device.itemsPerPage,
+  };
 
   const handleFilter = () => {
-    const queryParams = {
-      // deviceId: selectedDevice,
-      field: selectedField,
-      search: searchTxt,
-      page: activeTab === 0 ? sensor.currentPage : device.currentPage,
-      limit: activeTab === 0 ? sensor.itemsPerPage : device.itemsPerPage,
-    };
-
     if (activeTab === 0) {
-      dispatch(getSensorData(queryParams));
+      dispatch(getSensorData(queryParamsSensor));
     } else {
-      dispatch(getDeviceData(queryParams));
+      dispatch(getDeviceData(queryParamsDevice));
     }
   };
 
@@ -132,37 +142,7 @@ function Profile() {
           label="Device Logs"
         />
       </Tabs>
-      {/* Filter */}
-      {/* <Box className="flex gap-4 my-4 items-center">
-        {activeTab === 0 ? (
-          <>
-            <FormControl sx={{ width: "12rem" }}>
-              <InputLabel>Field</InputLabel>
-              <Select value={selectedField} onChange={(e) => setSelectedField(e.target.value)}>
-                <MenuItem value="id">ID</MenuItem>
-                <MenuItem value="temperature">Temperature</MenuItem>
-                <MenuItem value="humidity">Humidity</MenuItem>
-                <MenuItem value="light">Light</MenuItem>
-                <MenuItem value="timestamp">Timestamp</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField label="Search Value" value={searchTxt} onChange={(e) => setSearchTxt(e.target.value)} fullWidth />
-          </>
-        ) : (
-          <>
-            <FormControl sx={{ width: "12rem" }}>
-              <InputLabel>Device</InputLabel>
-              <Select value={selectedDevice} onChange={(e) => setSelectedDevice(e.target.value)}>
-                {device.devices.map((dev) => (
-                  <MenuItem key={dev.id} value={dev.id}>{dev.name}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField label="Timestamp" value={searchTxt} onChange={(e) => setSearchTxt(e.target.value)} fullWidth />
-          </>
-        )}
-        <Button variant="contained" color="primary" onClick={handleFilter}>Search</Button>
-      </Box> */}
+
       <Box className="flex gap-[4rem] my-[2rem] h-[5rem] filter__modal items-center ">
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
           Filter:
@@ -239,10 +219,19 @@ function Profile() {
       </Box>
 
       {activeTab === 0 && (
-        <TableData columns={sensorColumns} data={sensor.sensorData} />
+        <TableData
+          columns={sensorColumns}
+          data={sensor.sensorData}
+          queryParams={queryParamsSensor}
+        />
       )}
       {activeTab === 1 && (
-        <TableData columns={deviceLogsColumns} data={device.actionLogs} />
+        <TableData
+          columns={deviceLogsColumns}
+          data={device.actionLogs}
+          queryParams={queryParamsDevice}
+          tableDevice ={true}
+        />
       )}
       <Pagination
         count={activeTab === 0 ? sensor.totalPages : device.totalPages}

@@ -8,25 +8,28 @@ import {
   Paper,
 } from "@mui/material";
 import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
-import formatDate from "../utils/date.js";
+import { formatDate } from "../utils/date.js";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { getSensorData } from "../redux/data/DataSlice.js";
 
-function TableData({ columns, data }) {
+function TableData({ columns, data, queryParams, tableDevice }) {
   const dispatch = useDispatch();
   const [sortBy, setSortBy] = useState(null);
   const [sortType, setSortType] = useState("ASC");
   const handleSort = (columnId) => {
-    // Nếu click cùng một cột, đổi ASC ↔ DESC
     const newSortType =
       sortBy === columnId && sortType === "ASC" ? "DESC" : "ASC";
 
     setSortBy(columnId);
     setSortType(newSortType);
-
-    // Dispatch action gọi API với sortBy & sortType
-    dispatch(getSensorData({ orderBy: columnId, orderType: newSortType }));
+    dispatch(
+      getSensorData({
+        ...queryParams,
+        orderBy: columnId,
+        orderType: newSortType,
+      })
+    );
   };
   return (
     <TableContainer
@@ -46,9 +49,13 @@ function TableData({ columns, data }) {
                   textAlign: "center",
                   color: "#000",
                   py: 3,
-                  cursor: "pointer",
+                  cursor: tableDevice ? "default" : "pointer",
                 }}
-                onClick={() => handleSort(column.id)}
+                onClick={() => {
+                  if (!tableDevice) {
+                    handleSort(column.id);
+                  }
+                }}
               >
                 {column.label}{" "}
                 <span

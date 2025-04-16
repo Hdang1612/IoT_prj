@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import { Link } from "react-router-dom";
-import formatDate from "../utils/date";
+import { formatDate } from "../utils/date.js";
 
 function ActivityHistory() {
   const actionLogs = useSelector((state) => state.device.actionLogs);

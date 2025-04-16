@@ -12,6 +12,7 @@ export const getSensorDataService = async (
   let sql = "SELECT * FROM sensor_data";
   let conditions = [];
   let params = [];
+
   const validFields = [
     "id",
     "timestamp",
@@ -19,14 +20,22 @@ export const getSensorDataService = async (
     "light_intensity",
     "humidity",
   ];
-  if (field && search && validFields.includes(field)) {
-    conditions.push(`${field} LIKE ?`);
+
+  // Nếu có search nhưng không có field hợp lệ, mặc định tìm trong timestamp
+  if (search) {
+    if (field && validFields.includes(field)) {
+      conditions.push(`${field} LIKE ?`);
+    } else {
+      conditions.push(`timestamp LIKE ?`);
+    }
     params.push(`%${search}%`);
   }
+
   if (conditions.length > 0) {
-    sql += " WHERE " + conditions;
+    sql += " WHERE " + conditions.join(" AND ");
   }
 
+  // Sắp xếp theo orderBy nếu hợp lệ, ngược lại mặc định theo timestamp DESC
   if (orderBy && validFields.includes(orderBy)) {
     const sortType = orderType === "ASC" ? "ASC" : "DESC";
     sql += ` ORDER BY ${orderBy} ${sortType}`;
@@ -39,14 +48,15 @@ export const getSensorDataService = async (
 
   const [rows] = await db.query(sql, params);
 
+  // Tính tổng số lượng dữ liệu tìm thấy
   const [countResult] = await db.query(
     `SELECT COUNT(*) AS total FROM sensor_data ${
       conditions.length > 0 ? "WHERE " + conditions.join(" AND ") : ""
     }`,
-    conditions.length > 0 ? params.slice(0, -2) : []
+    params.slice(0, -2) // Loại bỏ limit, offset khỏi params
   );
 
-  const totalItems = countResult[0].total;
+  const totalItems = countResult[0]?.total || 0;
   const totalPages = Math.ceil(totalItems / limit);
 
   return {
