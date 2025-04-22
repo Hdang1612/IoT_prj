@@ -13,6 +13,7 @@ import routeSensorData from "./routes/sensorDataRoutes.js";
 import routeActionData from "./routes/actionRoutes.js";
 import routeDevice from "./routes/deviceRoutes.js";
 
+import "./config/mqttClient.js";
 const app = express();
 dotenv.config();
 
@@ -31,7 +32,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 db.query("SELECT 1")
   .then(() => {
     console.log("Connected to DB");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
       console.log(
         `Swagger docs available at http://localhost:${PORT}/api-docs`
