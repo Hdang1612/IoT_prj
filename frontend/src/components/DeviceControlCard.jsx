@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
+import { Box } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { getDeviceData } from "../redux/data/DeviceSlice";
-import { fetchDeviceList,toggleAction } from "../service/service";
-
-
+import { fetchDeviceList, toggleAction } from "../service/service";
 
 const devices = [
   {
@@ -57,38 +56,40 @@ export default function DeviceControlCard() {
         ...prevState,
         [deviceId]: !prevState[deviceId],
       }));
-      dispatch(getDeviceData({ page: 1 })); // Cập nhật actionLogs
+      dispatch(getDeviceData({ page: 1 }));
+      // Cập nhật actionLogs
+      console.log(">>>", deviceStatus);
     } catch (error) {
       console.error("Error toggling device:", error);
     }
   };
 
   return (
-    <div className="bg-[#F7F1FF] p-4 rounded-xl space-y-4 shadow-md w-full">
+    <Box className="bg-[#F7F1FF] p-4 rounded-xl space-y-4 shadow-md w-full">
       {devices.map((device) => (
-        <div key={device.id} className="flex items-center gap-4">
-          <div className={`${device.color} p-3 rounded-xl text-white`}>
+        <Box key={device.id} className="flex items-center gap-4">
+          <Box className={`${device.color} p-3 rounded-xl text-white`}>
             {device.icon}
-          </div>
+          </Box>
 
           <span className="text-xl font-medium text-gray-800">
             {device.name}
           </span>
 
-          <div
+          <Box
             onClick={() => toggleDevice(device.id)}
             className={`w-14 h-7 flex items-center rounded-full cursor-pointer transition duration-300 ml-auto ${
               deviceStatus[device.id] ? "bg-green-400" : "bg-gray-300"
             }`}
           >
-            <div
+            <Box
               className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
                 deviceStatus[device.id] ? "translate-x-7" : "translate-x-1"
               }`}
-            ></div>
-          </div>
-        </div>
+            ></Box>
+          </Box>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 }

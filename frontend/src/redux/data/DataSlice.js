@@ -21,26 +21,27 @@ const dataSlice = createSlice({
     actionLogs: [],
     totalItems: null,
     itemCount: null,
-    itemsPerPage: 10,
+    itemsPerPage: 5,
     totalPages: null,
     currentPage: 1,
     status: "",
     loading: false,
   },
-  reducers: {},
-  setSensorPage: (state, action) => {
-    state.currentPage = action.payload;
+  reducers: {
+    setSensorPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+    setSensorPageSize: (state, action) => {
+      state.itemsPerPage = action.payload;
+    },
   },
-  setPageSize: (state, action) => {
-    state.itemsPerPage = action.payload;
-  },
+
   extraReducers: (builder) => {
     builder
       .addCase(getSensorData.pending, () => {})
       .addCase(getSensorData.fulfilled, (state, action) => {
         state.sensorData = action.payload.data.data;
-        state.currentPage = action.payload.data.currentPage;
-        // state.itemsPerPage = action.payload.itemsPerPage;
+        // state.currentPage = action.payload.data.currentPage;
         state.totalItems = action.payload.data.totalItems;
         state.totalPages = action.payload.data.totalPages;
       })
@@ -48,5 +49,5 @@ const dataSlice = createSlice({
   },
 });
 
-export const { setSensorPage, setPageSize } = dataSlice.actions;
+export const { setSensorPage, setSensorPageSize } = dataSlice.actions;
 export default dataSlice.reducer;

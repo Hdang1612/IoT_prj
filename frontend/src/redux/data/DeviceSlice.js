@@ -1,28 +1,31 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { fetchActionLogs } from "../../service/service";
+import { fetchActionLogs, fetchDeviceList } from "../../service/service";
 
 export const getDeviceData = createAsyncThunk(
   "device/fetchData",
   async (params, { rejectWithValue }) => {
     try {
-      const res = await fetchActionLogs(params);
-      return res.data;
+      const res1 = await fetchActionLogs(params);
+      const res2 = await fetchDeviceList();
+      return {
+        actionLogs: res1.data,
+        devices: res2.data,
+      };
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-
 const deviceSlice = createSlice({
   name: "device",
   initialState: {
-    sensorData: [],
+    devices: [],
     actionLogs: [],
     totalItems: null,
     itemCount: null,
-    itemsPerPage: 10,
+    itemsPerPage: 5,
     totalPages: null,
     currentPage: 1,
     status: "",
@@ -32,7 +35,7 @@ const deviceSlice = createSlice({
     setDevicePage: (state, action) => {
       state.currentPage = action.payload;
     },
-    setPageSize: (state, action) => {
+    setDevicePageSize: (state, action) => {
       state.itemsPerPage = action.payload;
     },
   },
@@ -40,11 +43,11 @@ const deviceSlice = createSlice({
     builder
       .addCase(getDeviceData.pending, () => {})
       .addCase(getDeviceData.fulfilled, (state, action) => {
-        state.actionLogs = action.payload.data.data;
-        state.currentPage = action.payload.data.currentPage;
-        // state.itemsPerPage = action.payload.itemsPerPage;
-        state.totalItems = action.payload.data.totalItems;
-        state.totalPages = action.payload.data.totalPages;
+        state.actionLogs = action.payload.actionLogs.data.data;
+        // state.currentPage = action.payload.actionLogs.data.currentPage;
+        state.totalItems = action.payload.actionLogs.data.totalItems;
+        state.totalPages = action.payload.actionLogs.data.totalPages;
+        state.devices = action.payload.devices;
       })
       .addCase(getDeviceData.rejected, () => {});
 
@@ -57,5 +60,5 @@ const deviceSlice = createSlice({
   },
 });
 
-export const { setDevicePage, setPageSize } = deviceSlice.actions;
+export const { setDevicePage, setDevicePageSize } = deviceSlice.actions;
 export default deviceSlice.reducer;

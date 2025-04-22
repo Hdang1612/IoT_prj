@@ -43,7 +43,7 @@ function DashBoardChart({ data }) {
       },
       {
         label: "Light Intensity (Lux)",
-        data: data.map((item) => item.light_itensity),
+        data: data.map((item) => item.light_intensity),
         borderColor: "#FACC15", 
         backgroundColor: "rgba(250, 204, 21, 0.2)",
         tension: 0.4,

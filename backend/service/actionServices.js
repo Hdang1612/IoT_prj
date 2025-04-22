@@ -1,7 +1,7 @@
 import db from "../config/db.js";
 import { v4 as uuidv4 } from "uuid";
 
-export const getActionLogsService = async (page, limit, startDate, endDate,deviceId) => {
+export const getActionLogsService = async (page, limit, search, deviceId) => {
   const offset = (page - 1) * limit;
   let sql = `
         SELECT al.id, d.name AS device_name, al.action, al.timestamp
@@ -12,15 +12,14 @@ export const getActionLogsService = async (page, limit, startDate, endDate,devic
   let conditions = [];
   let params = [];
 
-  if (startDate) {
-    conditions.push("al.timestamp >= ?");
-    params.push(startDate);
+  if (search) {
+    conditions.push(
+      "(al.timestamp LIKE ? OR DATE_FORMAT(al.timestamp, '%Y-%m-%dT%H:%i:%s.000Z') LIKE ?)"
+    );
+    params.push(`%${search}%`, `%${search}%`);
   }
-  if (endDate) {
-    conditions.push("al.timestamp <= ?");
-    params.push(endDate);
-  }
-  if(deviceId) {
+
+  if (deviceId) {
     conditions.push("al.device_id = ?");
     params.push(deviceId);
   }
@@ -55,13 +54,14 @@ export const getActionLogsService = async (page, limit, startDate, endDate,devic
 };
 
 export const toggleDeviceStatusService = async (deviceId) => {
-  const [device] = await db.query(
-    "SELECT status FROM device WHERE id = ?",
-    [deviceId]
-  );
+  const [device] = await db.query("SELECT status FROM device WHERE id = ?", [
+    deviceId,
+  ]);
 
   if (device.length === 0) {
-    throw new Error("Device not found");
+    const error = new Error("Device not found");
+    error.status = 404;
+    throw error;
   }
 
   const currentStatus = device[0].status;

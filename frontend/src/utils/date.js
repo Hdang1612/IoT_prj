@@ -1,23 +1,26 @@
-export default function formatDate(dateString) {
+export  function formatDate(dateString) {
   const date = new Date(dateString);
-  
-  const dateOptions = {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    timeZone: 'Asia/Ho_Chi_Minh'
-  };
 
-  const timeOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Ho_Chi_Minh'
-  };
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Thêm 0 nếu < 10
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
 
-  const formattedDate = date.toLocaleDateString('vi-VN', dateOptions);
-  const formattedTime = date.toLocaleTimeString('vi-VN', timeOptions);
-
-  return `${formattedTime} - ${formattedDate}`;
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export  function formatDateChart(dateString) {
+  const date = new Date(dateString);
+
+  // const year = date.getFullYear();
+  // const month = String(date.getMonth() + 1).padStart(2, "0"); // Thêm 0 nếu < 10
+  // const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${hours}:${minutes}:${seconds}`;
+}
+

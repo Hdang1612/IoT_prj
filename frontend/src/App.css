@@ -9,10 +9,10 @@ html {
   /* font-size: 20px; */
   /* font-weight: 500; */
 }
-
+/* 
 ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 .filter__modal .inputs-datetime-group {
   display: grid;
@@ -24,7 +24,7 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #F7F1FF;
+    background-color: #f7f1ff;
     border-left: 1px solid #ebebeb;
     border-right: 1px solid #ebebeb;
     box-sizing: border-box;

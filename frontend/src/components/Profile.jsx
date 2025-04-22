@@ -1,9 +1,17 @@
-import { Modal, Box, Typography, Avatar, IconButton, Link } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Avatar,
+  IconButton,
+  Link,
+  Tooltip,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import BrushIcon from '@mui/icons-material/Brush';
-
+import BrushIcon from "@mui/icons-material/Brush";
+import ArticleIcon from "@mui/icons-material/Article";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 const style = {
   position: "absolute",
   top: "50%",
@@ -22,7 +30,7 @@ export default function ProfileModal({ open, handleClose, profile }) {
       <Box sx={style}>
         <Box display="flex" justifyContent="flex-end">
           <IconButton onClick={handleClose}>
-            <CloseIcon sx={{fontSize:20}} />
+            <CloseIcon sx={{ fontSize: 20 }} />
           </IconButton>
         </Box>
 
@@ -40,15 +48,29 @@ export default function ProfileModal({ open, handleClose, profile }) {
           </Typography>
 
           <Box display="flex" gap={3} mt={2}>
-            <Link href={profile.github} target="_blank" color="inherit">
-              <GitHubIcon fontSize="large" />
-            </Link>
-            <Link href={profile.facebook} target="_blank" color="inherit">
-              <FacebookIcon fontSize="large" />
-            </Link>
-            <Link href={profile.twitter} target="_blank" color="inherit">
-              <BrushIcon fontSize="large" />
-            </Link>
+            <Tooltip title="GitHub">
+              <Link href={profile.github} target="_blank" color="inherit">
+                <GitHubIcon fontSize="large" />
+              </Link>
+            </Tooltip>
+
+            <Tooltip title="Design">
+              <Link href={profile.twitter} target="_blank" color="inherit">
+                <BrushIcon fontSize="large" />
+              </Link>
+            </Tooltip>
+
+            <Tooltip title="API Documentation">
+              <Link href={profile.api_doc} target="_blank" color="inherit">
+                <ArticleIcon fontSize="large" />
+              </Link>
+            </Tooltip>
+
+            <Tooltip title="Download PDF">
+              <Link href={profile.api_doc} target="_blank" color="inherit">
+                <PictureAsPdfIcon fontSize="large" />
+              </Link>
+            </Tooltip>
           </Box>
         </Box>
       </Box>
