@@ -44,3 +44,20 @@ html {
     border-radius: 0 0.4rem 0.4rem 0;
   }
 }
+
+
+@keyframes strongBlink {
+  0% {
+    background-color: #f87171; /* red-400 */
+  }
+  50% {
+    background-color: #ffffff; /* white */
+  }
+  100% {
+    background-color: #f87171;
+  }
+}
+
+.blink-strong {
+  animation: strongBlink 0.5s infinite;
+}

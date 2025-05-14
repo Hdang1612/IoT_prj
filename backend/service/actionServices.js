@@ -2,10 +2,9 @@ import db from "../config/db.js";
 import { v4 as uuidv4 } from "uuid";
 import { publishDeviceControl } from "../config/mqttClient.js";
 
-export const getActionLogsService = async (page, limit, startDate, endDate,deviceId) => {
 const deviceMap = {
   "Ceiling Fan": "fan",
-  "Bulb": "bulb",
+  "Light": "bulb",
   "Air Conditioner": "dehumidifier",
 };
 export const getActionLogsService = async (page, limit, search, deviceId) => {

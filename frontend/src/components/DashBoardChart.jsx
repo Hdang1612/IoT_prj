@@ -48,6 +48,13 @@ function DashBoardChart({ data }) {
         tension: 0.4,
         fill: true,
       },
+      {
+        label: "Wind",
+        data: data.map((item) => item.wind),
+        borderColor: "#000",
+        tension: 0.4,
+        fill: true,
+      }
     ],
   };
 
