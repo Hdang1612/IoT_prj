@@ -28,10 +28,10 @@ function DashBoardChart({ data }) {
       {
         label: "Humidity (%)",
         data: data.map((item) => item.humidity),
-        borderColor: "#3B82F6", 
+        borderColor: "#3B82F6",
         backgroundColor: "rgba(59, 130, 246, 0.2)",
-        tension: 0.4, 
-        fill: true, 
+        tension: 0.4,
+        fill: true,
       },
       {
         label: "Temperature (°C)",
@@ -43,18 +43,24 @@ function DashBoardChart({ data }) {
       },
       {
         label: "Light Intensity (Lux)",
-        data: data.map((item) => item.light_intensity),
-        borderColor: "#FACC15", 
-        backgroundColor: "rgba(250, 204, 21, 0.2)",
+        data: data.map((item) => item.light_level),
+        borderColor: "#FACC15",
         tension: 0.4,
         fill: true,
       },
+      {
+        label: "Wind",
+        data: data.map((item) => item.wind),
+        borderColor: "#000",
+        tension: 0.4,
+        fill: true,
+      }
     ],
   };
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, 
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "bottom",

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getSensorData } from "../redux/data/DataSlice";
+// import { useSelector } from "react-redux";
+// import { getSensorData } from "../redux/data/DataSlice";
 
 import { formatDateChart } from "../utils/date.js";
 
@@ -12,24 +12,42 @@ import DeviceControlCard from "../components/DeviceControlCard";
 import ActivityHistory from "../components/ActivityList";
 import ProfileModal from "../components/Profile";
 import { profile } from "../utils/profile";
+import webSocketService from "../service/webSocket.js";
 // import { sampleData } from "../utils/dummyData";
 
 export default function Dashboard() {
   const [openProfile, setOpenProfile] = useState(false);
-  const dispatch = useDispatch();
-  const sensorData = useSelector((state) => state.sensor.sensorData);
-  const formattedSensorData = sensorData
-    .map((item) => ({
-      ...item,
-      timestamp: formatDateChart(item.timestamp),
-    }))
-    .reverse();
-
+  const [sensorDataWs, setSensorDataWs] = useState([]);
   useEffect(() => {
-    dispatch(
-      getSensorData({ orderBy: "timestamp", orderType: "DESC", limit: 10 })
-    );
-  }, [dispatch]);
+    const wsUrl = "ws://localhost:8000";
+    webSocketService.connect(wsUrl);
+
+    webSocketService.onMessage((newData) => {
+      if (newData.type === "device_status") {
+        // xử lý riêng device_status tại đây (nếu cần)
+        return;
+      }
+      const formattedData = {
+        ...newData,
+        timestamp: formatDateChart(newData.timestamp),
+      };
+      setSensorDataWs((prevData) => {
+        const updatedData = [...prevData, formattedData];
+
+        // Giới hạn số điểm hiển thị
+        if (updatedData.length > 10) {
+          updatedData.shift();
+        }
+
+        return updatedData;
+      });
+    });
+
+    return () => {
+      webSocketService.disconnect();
+    };
+  }, []);
+  const latestData = sensorDataWs[sensorDataWs.length - 1];
   return (
     <Box>
       {/* Header */}
@@ -74,30 +92,45 @@ export default function Dashboard() {
         {/* Left Content */}
         <Box className="l_content" sx={{ width: "66.66%", mr: "3rem" }}>
           <Box
-            className="card_group"
+            className="card_group flex-wrap"
             sx={{ display: "flex", gap: "1rem", mb: "2rem" }}
           >
-            <Box sx={{ width: "33.33%" }}>
-              <DashBoardCard type="humidity" value={sensorData[0]?.humidity} unit="%" />
+            <Box sx={{ width: "30%" }}>
+              <DashBoardCard
+                type="humidity"
+                value={latestData?.humidity}
+                unit="%"
+              />
             </Box>
-            <Box sx={{ width: "33.33%" }}>
-              <DashBoardCard type="temperature" value={sensorData[0]?.temperature} unit="°C" />
+            <Box sx={{ width: "30%" }}>
+              <DashBoardCard
+                type="temperature"
+                value={latestData?.temperature}
+                unit="°C"
+              />
             </Box>
-            <Box sx={{ width: "33.33%" }}>
-              <DashBoardCard type="light" value={sensorData[0]?.light_intensity} unit="Lux" />
+            <Box sx={{ width: "30%" }}>
+              <DashBoardCard
+                type="light"
+                value={latestData?.light_level}
+                unit="Lux"
+              />
+            </Box>
+            <Box sx={{ width: "30%" }}>
+              <DashBoardCard type="wind" value={latestData?.wind} unit="m/s" />
             </Box>
           </Box>
 
           {/* Chart */}
           <Box className="data_chart" sx={{ backgroundColor: "#f9fafb" }}>
-            <DashBoardChart data={formattedSensorData} />
+            <DashBoardChart data={sensorDataWs} />
           </Box>
         </Box>
 
         {/* Right Content */}
         <Box className="r_content" sx={{ width: "25%" }}>
           <Box sx={{ mb: "2rem" }}>
-            <DeviceControlCard />
+            <DeviceControlCard wind={latestData?.wind} />
           </Box>
           <Box>
             <ActivityHistory />

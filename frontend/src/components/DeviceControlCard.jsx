@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
+import { Switch, CircularProgress } from "@mui/material";
 import { Box } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { getDeviceData } from "../redux/data/DeviceSlice";
 import { fetchDeviceList, toggleAction } from "../service/service";
+import webSocketService from "../service/webSocket";
 
 const devices = [
   {
@@ -28,10 +30,39 @@ const devices = [
   },
 ];
 
-export default function DeviceControlCard() {
+export default function DeviceControlCard({ wind }) {
   const [deviceStatus, setDeviceStatus] = useState({});
+  const [loadingDevices, setLoadingDevices] = useState({});
   const dispatch = useDispatch();
   useEffect(() => {
+    webSocketService.onMessage((data) => {
+      try {
+        const parsed = typeof data === "string" ? JSON.parse(data) : data;
+        if (parsed.type !== "device_status") return;
+        console.log("Parsed data >>>>>>>>>>>>:", parsed);
+
+        const { deviceId, status } = parsed;
+
+        if (typeof deviceId === "number" && typeof status === "boolean") {
+          setDeviceStatus((prevState) => ({
+            ...prevState,
+            [deviceId]: status,
+          }));
+
+          setLoadingDevices((prev) => ({
+            ...prev,
+            [deviceId]: false,
+          }));
+        }
+      } catch (err) {
+        console.error("Invalid WebSocket message:", err);
+      }
+    });
+
+    // Kết nối WebSocket
+    webSocketService.connect("ws://localhost:8000");
+
+    // Fetch trạng thái thiết bị khi lần đầu render
     const fetchDeviceStatus = async () => {
       try {
         const response = await fetchDeviceList();
@@ -47,21 +78,22 @@ export default function DeviceControlCard() {
     };
 
     fetchDeviceStatus();
-  }, []);
+
+    return () => {
+      webSocketService.disconnect();
+    };
+  }, [dispatch]);
 
   const toggleDevice = async (deviceId) => {
+    setLoadingDevices((prev) => ({ ...prev, [deviceId]: true }));
     try {
       await toggleAction(deviceId);
-      setDeviceStatus((prevState) => ({
-        ...prevState,
-        [deviceId]: !prevState[deviceId],
-      }));
-      dispatch(getDeviceData({ page: 1 }));
-      // Cập nhật actionLogs
-      console.log(">>>", deviceStatus);
     } catch (error) {
       console.error("Error toggling device:", error);
+      setLoadingDevices((prev) => ({ ...prev, [deviceId]: false }));
     }
+    // dispatch (getDeviceData)
+    dispatch(getDeviceData({ page: 1 }));
   };
 
   return (
@@ -76,20 +108,27 @@ export default function DeviceControlCard() {
             {device.name}
           </span>
 
-          <Box
-            onClick={() => toggleDevice(device.id)}
-            className={`w-14 h-7 flex items-center rounded-full cursor-pointer transition duration-300 ml-auto ${
-              deviceStatus[device.id] ? "bg-green-400" : "bg-gray-300"
-            }`}
-          >
-            <Box
-              className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                deviceStatus[device.id] ? "translate-x-7" : "translate-x-1"
-              }`}
-            ></Box>
-          </Box>
+          <Switch
+            checked={deviceStatus[device.id] ?? false}
+            onChange={() => toggleDevice(device.id)}
+            disabled={loadingDevices[device.id]}
+            color="success"
+          />
+          {loadingDevices[device.id] && (
+            <CircularProgress size={20} className="ml-2" />
+          )}
         </Box>
       ))}
+      <Box
+        className={`${
+          wind > 50 ? "blink-strong text-black" : "bg-gray-400"
+        } p-3 rounded-xl text-white flex items-center justify-center`}
+      >
+        <LightbulbIcon className="mx-auto" sx={{ fontSize: 30 }} />
+      </Box>
+      <Box className="text-center mt-2">
+        <span className="text-xl font-medium text-gray-800">Wind</span>
+      </Box>
     </Box>
   );
 }

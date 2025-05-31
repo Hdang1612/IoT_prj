@@ -1,6 +1,12 @@
 import db from "../config/db.js";
 import { v4 as uuidv4 } from "uuid";
+import { publishDeviceControl } from "../config/mqttClient.js";
 
+const deviceMap = {
+  "Ceiling Fan": "fan",
+  "Light": "bulb",
+  "Air Conditioner": "dehumidifier",
+};
 export const getActionLogsService = async (page, limit, search, deviceId) => {
   const offset = (page - 1) * limit;
   let sql = `
@@ -23,6 +29,7 @@ export const getActionLogsService = async (page, limit, search, deviceId) => {
     conditions.push("al.device_id = ?");
     params.push(deviceId);
   }
+ 
 
   if (conditions.length > 0) {
     sql += " WHERE " + conditions.join(" AND ");
@@ -54,9 +61,10 @@ export const getActionLogsService = async (page, limit, search, deviceId) => {
 };
 
 export const toggleDeviceStatusService = async (deviceId) => {
-  const [device] = await db.query("SELECT status FROM device WHERE id = ?", [
-    deviceId,
-  ]);
+  const [device] = await db.query(
+    "SELECT id, name, status FROM device WHERE id = ?",
+    [deviceId]
+  );
 
   if (device.length === 0) {
     const error = new Error("Device not found");
@@ -64,18 +72,27 @@ export const toggleDeviceStatusService = async (deviceId) => {
     throw error;
   }
 
-  const currentStatus = device[0].status;
-  const newStatus = currentStatus === 1 ? 0 : 1;
+  const { id, name, status } = device[0];
+  const newStatus = status === 1 ? 0 : 1;
 
   await db.query("UPDATE device SET status = ? WHERE id = ?", [
     newStatus,
     deviceId,
   ]);
-
   const action = newStatus === 1 ? "ON" : "OFF";
   await db.query(
     "INSERT INTO action_logs (id,device_id, action, timestamp) VALUES (?,?, ?, NOW())",
     [uuidv4(), deviceId, action]
   );
+
+  // Gửi MQTT
+  const deviceKey = deviceMap[name];
+  if (deviceKey) {
+    publishDeviceControl({
+      [deviceKey]: newStatus === 1,
+    });
+  } else {
+    console.warn("⚠️ Không tìm thấy mapping cho thiết bị:", name);
+  }
   return { newStatus, action };
 };
